@@ -1,13 +1,18 @@
 const Sequelize = require("sequelize");
 
-module.exports = db = new Sequelize("backstage", "robinDB", "S10732b54861!", {
-  host: "145.131.29.106",
-  dialect: "mysql",
+module.exports = db = new Sequelize(
+  process.env.DB_DATABASE,
+  process.env.DB_USER,
+  process.env.DB_PASS,
+  {
+    host: process.env.DB_HOST,
+    dialect: "mysql",
 
-  pool: {
-    max: 5,
-    min: 0,
-    acquire: 30000,
-    idle: 10000,
-  },
-});
+    pool: {
+      max: 5,
+      min: 0,
+      acquire: 30000,
+      idle: 10000,
+    },
+  }
+);

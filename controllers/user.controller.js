@@ -16,8 +16,8 @@ const UserIdPath = require("../models/UserIdPath.model");
 const Login = require("../models/login.model");
 
 exports.login = async (req, res) => {
-  const accessTokenSecret =
-    "$2y$10$VRLzUr17wvPGMxghnFH5i.3s/ApL1wsC.7OFvzedG8FSKzF.CIgfe";
+  const accessTokenSecret = process.env.SECRETKEY;
+
   const { email, wachtwoord } = req.body;
 
   const user = await Login.findOne({
@@ -30,7 +30,7 @@ exports.login = async (req, res) => {
 
   if (bcrypt.compareSync(wachtwoord, user.wachtwoord)) {
     const token = jwt.sign({ user }, accessTokenSecret, {
-      expiresIn: "24h",
+      expiresIn: "3h",
     });
 
     res.json({
