@@ -2,7 +2,7 @@ const db = require("../config/database.js");
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 const _ = require("lodash");
-
+const jwt = require("jsonwebtoken");
 // Models
 const User = require("../models/user.model");
 const UserDetails = require("../models/UserDetails.model");
