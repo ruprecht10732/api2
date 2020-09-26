@@ -23,7 +23,7 @@ exports.login = async (req, res) => {
   if (!user) {
     throw Error("User not found");
   }
-  if (bcrypt.compareSync(password, user.password)) {
+  if (bcrypt.compareSync(wachtwoord, user.wachtwoord)) {
     const token = jwt.sign({ user }, "yourSecretKey", {
       expiresIn: "24h",
     });
