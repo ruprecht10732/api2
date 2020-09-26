@@ -38,7 +38,7 @@ exports.invite = (req, res) => {
         .sendMail({
           to: invite.email,
           from: "The Call Company <info@thecallcompany.nl>",
-          subject: "Verzoek: Maak je aanmelding compleet",
+          subject: "Maak je aanmelding compleet",
           html: template,
         })
         .then((res) => console.log("Successfully sent"))
