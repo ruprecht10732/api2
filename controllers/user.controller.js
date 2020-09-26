@@ -15,7 +15,7 @@ const UserIdPath = require("../models/UserIdPath.model");
 const Login = require("../models/login.model");
 
 exports.login = async (req, res) => {
-  const { email, wachtwoord } = await req.body;
+  const { email, wachtwoord } = req.body;
   const user = await Login.findOne({
     email,
   });
