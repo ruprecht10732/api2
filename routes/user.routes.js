@@ -1,34 +1,37 @@
 module.exports = (app) => {
   const User = require("../controllers/user.controller");
-
   var router = require("express").Router();
+  const authenticateToken = require("../middleware/authenticateToken");
 
   // Login user
   router.post("/login", User.login);
 
+  // Logout user
+  router.post("/logout", User.logout);
+
   // Create a new user
-  router.post("/", User.create);
+  router.post("/", authenticateToken, User.create);
 
   // Create a new user from invite
-  router.post("/:id", User.createfromivite);
+  router.post("/:id", authenticateToken, User.createfromivite);
 
   // Retrieve all users
-  router.get("/", User.findAll);
+  router.get("/", authenticateToken, User.findAll);
 
   // Retrieve all published users
-  router.get("/active", User.findAllPublished);
+  router.get("/active", authenticateToken, User.findAllPublished);
 
   // Retrieve a single user with id
-  router.get("/:id", User.findOne);
+  router.get("/:id", authenticateToken, User.findOne);
 
   // Update a user with id
-  router.put("/:id", User.update);
+  router.put("/:id", authenticateToken, User.update);
 
   // Delete a user with id
-  router.delete("/:id", User.delete);
+  router.delete("/:id", authenticateToken, User.delete);
 
   // Delete all users
-  router.delete("/", User.deleteAll);
+  router.delete("/", authenticateToken, User.deleteAll);
 
   app.use("/api/user", router);
 };

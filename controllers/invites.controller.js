@@ -70,7 +70,7 @@ exports.update = async (req, res) => {
           const user = await User.create(userEmail);
           const userId = await user.id;
           const loginEmail = user.email;
-          const hash = bcrypt.hashSync(req.body.wachtwoord, 10);
+          const hash = bcrypt.hash(req.body.wachtwoord, 10);
           const loginData = {
             wachtwoord: hash,
             email: loginEmail,

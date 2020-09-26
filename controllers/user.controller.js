@@ -3,6 +3,7 @@ const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 const _ = require("lodash");
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 // Models
 const User = require("../models/user.model");
 const UserDetails = require("../models/UserDetails.model");
@@ -15,16 +16,21 @@ const UserIdPath = require("../models/UserIdPath.model");
 const Login = require("../models/login.model");
 
 exports.login = async (req, res) => {
+  const accessTokenSecret =
+    "$2y$10$VRLzUr17wvPGMxghnFH5i.3s/ApL1wsC.7OFvzedG8FSKzF.CIgfe";
+  const refreshTokens = [];
   const { email, wachtwoord } = req.body;
+
   const user = await Login.findOne({
-    where: { email: req.body.email },
+    where: { email: email },
   });
 
   if (!user) {
     throw Error("User not found");
   }
-  if (bcrypt.compareSync(wachtwoord, user.wachtwoord)) {
-    const token = jwt.sign({ user }, "yourSecretKey", {
+
+  if (bcrypt.compare(wachtwoord, user.wachtwoord)) {
+    const token = jwt.sign({ user }, accessTokenSecret, {
       expiresIn: "24h",
     });
 
@@ -38,6 +44,12 @@ exports.login = async (req, res) => {
       message: "Unauthenticated",
     });
   }
+};
+
+// Logout
+
+exports.logout = async (req, res) => {
+  res.status(200).send({ auth: false, token: null });
 };
 
 // Create and Save a new User
