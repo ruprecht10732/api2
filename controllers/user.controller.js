@@ -14,8 +14,8 @@ const UserBankDetails = require("../models/UserBankDetails.model");
 const UserIdPath = require("../models/UserIdPath.model");
 const Login = require("../models/login.model");
 
-async function login(req, res) {
-  const { email, wachtwoord } = req.body;
+exports.login = async (req, res) => {
+  const { email, wachtwoord } = await req.body;
   const user = await Login.findOne({
     email,
   });
@@ -38,7 +38,7 @@ async function login(req, res) {
       message: "Unauthenticated",
     });
   }
-}
+};
 
 // Create and Save a new User
 exports.createfromivite = async (req, res) => {
