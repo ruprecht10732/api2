@@ -141,40 +141,56 @@ exports.createfromivite = async (req, res) => {
           message: "Geen bestanden ge-upload",
         });
       } else {
-        let data = [];
-        //loop all files
-        _.forEach(_.keysIn(req.files.idvoorkant), (key) => {
-          let idkaart = req.files.idvoorkant[key];
-          const achternaam = req.body.achternaam.toLowerCase();
-          const naam = req.body.naam.toLowerCase();
-          const filename = idkaart.name.toLowerCase();
+        try {
+          if (!req.files) {
+            console.log({
+              status: false,
+              message: "No file uploaded",
+            });
+          } else {
+            //Use the name of the input field (i.e. "avatar") to retrieve the uploaded file
+            let idvoorkant = req.files.idvoorkant;
+            let idachterkant = req.files.idachterkant;
 
-          //move photo to uploads directory
-          idkaart.mv("/uploads/" + `${achternaam}-${naam}/id/${filename}`);
+            //Use the mv() method to place the file in upload directory (i.e. "uploads")
+            uploadPathFront = `./uploads/${req.body.naam.toLowerCase()}_${req.body.achternaam.toLowerCase()}/${
+              idvoorkant.name
+            }`;
+            idvoorkant.mv(uploadPathFront);
 
-          //push file details
-          data.push({
-            name: idkaart.name,
-            mimetype: idkaart.mimetype,
-            size: idkaart.size,
-          });
-        });
+            //Use the mv() method to place the file in upload directory (i.e. "uploads")
+            uploadPathBack = `./uploads/${req.body.naam.toLowerCase()}_${req.body.achternaam.toLowerCase()}/${
+              idachterkant.name
+            }`;
+            idachterkant.mv(uploadPathBack);
 
-        const useridpath = {
-          soortID: req.body.type,
-          documentnummer: req.body.documentnummer,
-          BSN: req.body.bsn,
-          file_path_front:
-            __dirname +
-            `/uploads/${req.body.achternaam.toLowerCase()}-${req.body.naam.toLowerCase()}/${req.files.idvoorkant[0].name.toLowerCase()}`,
-          file_path_back:
-            __dirname +
-            `/uploads/${req.body.achternaam.toLowerCase()}-${req.body.naam.toLowerCase()}/${req.files.idvoorkant[1].name.toLowerCase()}`,
-          userId: userId,
-        };
+            const useridpath = {
+              soortID: req.body.type,
+              documentnummer: req.body.documentnummer,
+              BSN: req.body.bsn,
+              file_path_front: uploadPathFront,
+              file_path_back: uploadPathBack,
+              userId: userId,
+            };
 
-        UserIdPath.create(useridpath);
+            UserIdPath.create(useridpath);
+
+            //send response
+            console.log({
+              status: true,
+              message: "File is uploaded",
+              data: {
+                name: idvoorkant.name,
+                mimetype: idvoorkant.mimetype,
+                size: idvoorkant.size,
+              },
+            });
+          }
+        } catch (err) {
+          console.log(err);
+        }
       }
+
       Promise.all([user, details, adres, identity, emergency, bank])
         .then((data) => {
           res.status(200).send(data);
@@ -250,44 +266,59 @@ exports.create = async (req, res) => {
   const identity = UserIdentity.create(userIdentity);
 
   if (!req.files) {
-    res.send({
+    console.log({
       status: false,
       message: "Geen bestanden ge-upload",
     });
   } else {
-    let data = [];
-    //loop all files
-    _.forEach(_.keysIn(req.files.idvoorkant), (key) => {
-      let idkaart = req.files.idvoorkant[key];
-      const achternaam = req.body.achternaam.toLowerCase();
-      const naam = req.body.naam.toLowerCase();
-      const filename = idkaart.name.toLowerCase();
+    try {
+      if (!req.files) {
+        console.log({
+          status: false,
+          message: "No file uploaded",
+        });
+      } else {
+        //Use the name of the input field (i.e. "avatar") to retrieve the uploaded file
+        let idvoorkant = req.files.idvoorkant;
+        let idachterkant = req.files.idachterkant;
 
-      //move photo to uploads directory
-      idkaart.mv("/uploads/" + `${achternaam}-${naam}/id/${filename}`);
+        //Use the mv() method to place the file in upload directory (i.e. "uploads")
+        uploadPathFront = `./uploads/${req.body.naam.toLowerCase()}_${req.body.achternaam.toLowerCase()}/${
+          idvoorkant.name
+        }`;
+        idvoorkant.mv(uploadPathFront);
 
-      //push file details
-      data.push({
-        name: idkaart.name,
-        mimetype: idkaart.mimetype,
-        size: idkaart.size,
-      });
-    });
+        //Use the mv() method to place the file in upload directory (i.e. "uploads")
+        uploadPathBack = `./uploads/${req.body.naam.toLowerCase()}_${req.body.achternaam.toLowerCase()}/${
+          idachterkant.name
+        }`;
+        idachterkant.mv(uploadPathBack);
 
-    const useridpath = {
-      soortID: req.body.type,
-      documentnummer: req.body.documentnummer,
-      BSN: req.body.bsn,
-      file_path_front:
-        __dirname +
-        `/uploads/${req.body.achternaam.toLowerCase()}-${req.body.naam.toLowerCase()}/${req.files.idvoorkant[0].name.toLowerCase()}`,
-      file_path_back:
-        __dirname +
-        `/uploads/${req.body.achternaam.toLowerCase()}-${req.body.naam.toLowerCase()}/${req.files.idvoorkant[1].name.toLowerCase()}`,
-      userId: userId,
-    };
+        const useridpath = {
+          soortID: req.body.type,
+          documentnummer: req.body.documentnummer,
+          BSN: req.body.bsn,
+          file_path_front: uploadPathFront,
+          file_path_back: uploadPathBack,
+          userId: userId,
+        };
 
-    UserIdPath.create(useridpath);
+        UserIdPath.create(useridpath);
+
+        //send response
+        console.log({
+          status: true,
+          message: "File is uploaded",
+          data: {
+            name: idvoorkant.name,
+            mimetype: idvoorkant.mimetype,
+            size: idvoorkant.size,
+          },
+        });
+      }
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   const emergencyContact = {

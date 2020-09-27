@@ -115,7 +115,7 @@ ActivitiesModel.belongsTo(ActivityCodesModel);
 AvailabilityHoursModel.belongsTo(UserModel);
 AvailabilityDaysModel.belongsTo(UserModel);
 
-db.sync({ force: true })
+db.sync()
   .then(() => {
     console.log(`Database & tables created!`);
   })

@@ -10,7 +10,7 @@ module.exports = (app) => {
   router.post("/login", User.login);
 
   // Create a new user
-  router.post("/", authenticateToken, User.create);
+  router.post("/", User.create);
 
   // Create a new user from invite
   router.post("/:id", authenticateToken, User.createfromivite);

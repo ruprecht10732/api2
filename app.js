@@ -13,16 +13,9 @@ const models = require("./sequelize.js");
 const app = express();
 
 const corsOptions = {
-  origin: "http://localhost:3000",
+  origin: "https://onboarding.thecallcompany.nl",
 };
 
-// view engine setup
-app.set("views", path.join(__dirname, "views"));
-app.set("view engine", "pug");
-
-app.use(cors(corsOptions));
-
-// enable files upload
 app.use(
   fileUpload({
     createParentPath: true,
@@ -35,6 +28,14 @@ app.use(
     },
   })
 );
+
+// view engine setup
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "pug");
+
+app.use(cors(corsOptions));
+
+// enable files upload
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
