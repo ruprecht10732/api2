@@ -62,7 +62,7 @@ exports.login = async (req, res) => {
 exports.createfromivite = async (req, res) => {
   db.transaction(async function (t) {
     const user = await User.findOne({
-      where: { id: 1 },
+      where: { id: req.params.id },
     });
 
     if (user) {
