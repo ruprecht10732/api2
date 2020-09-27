@@ -13,7 +13,7 @@ const models = require("./sequelize.js");
 const app = express();
 
 const corsOptions = {
-  origin: "https://onboarding.thecallcompany.nl",
+  origin: "http://localhost:3000",
 };
 
 // view engine setup

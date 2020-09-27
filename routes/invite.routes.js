@@ -14,10 +14,10 @@ module.exports = (app) => {
   // router.get("/active", Invitee.findAllPublished);
 
   // Retrieve a single invitee with id
-  router.get("/:id", authenticateToken, Invitee.findOne);
+  router.get("/:id", Invitee.findOne);
 
   // Update a invitee with id
-  router.put("/:id", authenticateToken, Invitee.update);
+  router.put("/:id", Invitee.update);
 
   // // Delete a invitee with id
   // router.delete("/:id", Invitee.delete);

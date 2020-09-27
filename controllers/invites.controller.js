@@ -63,14 +63,14 @@ exports.update = async (req, res) => {
           const userEmail = {
             email: req.body.email,
           };
-          const invitee = Invitees.update(
+          const invitee = await Invitees.update(
             { accepted: true },
             { where: { key: req.params.id } }
           );
           const user = await User.create(userEmail);
           const userId = await user.id;
-          const loginEmail = user.email;
-          const hash = bcrypt.hash(req.body.wachtwoord, 10);
+          const loginEmail = await user.email;
+          const hash = await bcrypt.hash(req.body.wachtwoord, 10);
           const loginData = {
             wachtwoord: hash,
             email: loginEmail,

@@ -4,6 +4,7 @@ const Op = Sequelize.Op;
 const _ = require("lodash");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const fileUpload = require("express-fileupload");
 // Models
 const User = require("../models/user.model");
 const UserDetails = require("../models/UserDetails.model");
@@ -15,153 +16,179 @@ const UserBankDetails = require("../models/UserBankDetails.model");
 const UserIdPath = require("../models/UserIdPath.model");
 const Login = require("../models/login.model");
 
-exports.login = async (req, res) => {
-  const accessTokenSecret = process.env.SECRETKEY;
-
-  const { email, wachtwoord } = req.body;
-
-  const user = await Login.findOne({
-    where: { email: email },
+exports.simplecreate = async (req, res) => {
+  bcrypt.hash(req.body.wachtwoord, 10).then((hash) => {
+    const user = Login.create({
+      email: req.body.email,
+      wachtwoord: hash,
+    })
+      .then((response) => {
+        res.status(201).json({
+          message: "User successfully created!",
+          result: response,
+        });
+      })
+      .catch((error) => {
+        res.status(500).json({
+          error: error,
+        });
+      });
   });
-
-  if (!user) {
-    throw Error("User not found");
-  }
-
-  if (bcrypt.compareSync(wachtwoord, user.wachtwoord)) {
-    const token = jwt.sign({ user }, accessTokenSecret, {
-      expiresIn: "3h",
-    });
-
-    res.json({
-      user,
-      token,
-      message: "user created successfully",
-    });
-  } else {
-    res.status(401).json({
-      message: "Unauthenticated",
-    });
-  }
 };
 
-// Logout
-
-exports.logout = async (req, res) => {
-  res.status(200).send({ auth: false, token: null });
+exports.login = async (req, res) => {
+  let getUser = Login.findOne({
+    where: { email: req.body.email },
+  })
+    .then((user) => {
+      if (!user) {
+        return res.status(401).json({
+          message: "Authentication failed",
+        });
+      }
+      getUser = user;
+      return bcrypt.compare(req.body.wachtwoord, user.wachtwoord);
+    })
+    .then((response) => {
+      if (!response) {
+        return res.status(401).json({
+          message: "Authentication failed",
+        });
+      }
+      let jwtToken = jwt.sign(
+        {
+          email: getUser.email,
+          userId: getUser.userId,
+        },
+        process.env.SECRETKEY,
+        {
+          expiresIn: "1h",
+        }
+      );
+      res.status(200).json({
+        id: getUser.userId,
+        token: jwtToken,
+        expiresIn: 99000,
+      });
+    })
+    .catch((err) => {
+      return res.status(401).json({
+        message: "Authentication failed",
+      });
+    });
 };
 
 // Create and Save a new User
 exports.createfromivite = async (req, res) => {
-  const user = await User.findOne({
-    where: { id: req.params.id },
-  })
-    .then((users) => res.json(users))
-    .catch((error) =>
-      res.status(400).json("Er ging iets mis, geen gebruiker kunnen aanmaken")
-    );
-
-  const userId = await user.id;
-
-  const userDetails = {
-    naam: req.body.naam,
-    achternaam: req.body.achternaam,
-    geboortedatum: req.body.geboortedatum,
-    nationaliteit: req.body.nationaliteit,
-    mobiel: req.body.telefoon,
-    geslacht: req.body.geslacht,
-    userId: userId,
-  };
-
-  const details = await UserDetails.create(userDetails);
-
-  const userAddress = {
-    straatnaam: req.body.straat,
-    huisnummer: req.body.huisnummer,
-    toevoeging: req.body.toevoeging,
-    postcode: req.body.postcode,
-    woonplaats: req.body.woonplaats,
-    userId: userId,
-  };
-
-  const adres = await UserAddress.create(userAddress);
-
-  const userIdentity = {
-    soortID: req.body.type,
-    documentnummer: req.body.documentnummer,
-    BSN: req.body.bsn,
-    userId: userId,
-  };
-
-  const identity = await UserIdentity.create(userIdentity);
-
-  if (!req.files) {
-    res.send({
-      status: false,
-      message: "Geen bestanden ge-upload",
-    });
-  } else {
-    let data = [];
-    //loop all files
-    _.forEach(_.keysIn(req.files.idvoorkant), (key) => {
-      let idkaart = req.files.idvoorkant[key];
-      const achternaam = req.body.achternaam.toLowerCase();
-      const naam = req.body.naam.toLowerCase();
-      const filename = idkaart.name.toLowerCase();
-
-      //move photo to uploads directory
-      idkaart.mv("/uploads/" + `${achternaam}-${naam}/id/${filename}`);
-
-      //push file details
-      data.push({
-        name: idkaart.name,
-        mimetype: idkaart.mimetype,
-        size: idkaart.size,
-      });
+  db.transaction(async function (t) {
+    const user = await User.findOne({
+      where: { id: 1 },
     });
 
-    const useridpath = {
-      soortID: req.body.type,
-      documentnummer: req.body.documentnummer,
-      BSN: req.body.bsn,
-      file_path_front:
-        __dirname +
-        `/uploads/${req.body.achternaam.toLowerCase()}-${req.body.naam.toLowerCase()}/${req.files.idvoorkant[0].name.toLowerCase()}`,
-      file_path_back:
-        __dirname +
-        `/uploads/${req.body.achternaam.toLowerCase()}-${req.body.naam.toLowerCase()}/${req.files.idvoorkant[1].name.toLowerCase()}`,
-      userId: userId,
-    };
+    if (user) {
+      const userId = user.dataValues.id;
+      const userDetails = {
+        naam: req.body.naam,
+        achternaam: req.body.achternaam,
+        geboortedatum: req.body.geboortedatum,
+        nationaliteit: req.body.nationaliteit,
+        mobiel: req.body.telefoon,
+        geslacht: req.body.geslacht,
+        userId: userId,
+      };
 
-    UserIdPath.create(useridpath);
-  }
+      const details = await UserDetails.create(userDetails);
 
-  const emergencyContact = {
-    naam: req.body.noodContactNaam,
-    achternaam: req.body.noodContactAchternaam,
-    telefoonnummer1: req.body.noodContactTelefoon,
-    userId: userId,
-  };
+      const userAddress = {
+        straatnaam: req.body.straat,
+        huisnummer: req.body.huisnummer,
+        toevoeging: req.body.toevoeging,
+        postcode: req.body.postcode,
+        woonplaats: req.body.woonplaats,
+        userId: userId,
+      };
+      const adres = await UserAddress.create(userAddress);
 
-  const emergency = await UserEmergency.create(emergencyContact);
+      const userIdentity = {
+        soortID: req.body.type,
+        documentnummer: req.body.documentnummer,
+        BSN: req.body.bsn,
+        userId: userId,
+      };
 
-  const bankdetails = {
-    banknaam: req.body.banknaam,
-    iban: req.body.iban,
-    userId: userId,
-  };
+      const identity = await UserIdentity.create(userIdentity);
 
-  const bank = await UserBankDetails.create(bankdetails);
+      const emergencyContact = {
+        naam: req.body.noodContactNaam,
+        achternaam: req.body.noodContactAchternaam,
+        telefoonnummer1: req.body.noodContactTelefoon,
+        userId: userId,
+      };
 
-  Promise.all([user, details, adres, identity, emergency, bank])
-    .then((data) => {
-      res.status(200).send(data);
-    })
-    .catch((err) => {
-      res.status(400).send({
-        message: err.message || "Some error occurred while creating the user.",
-      });
-    });
+      const emergency = await UserEmergency.create(emergencyContact);
+
+      const bankdetails = {
+        banknaam: req.body.banknaam,
+        iban: req.body.iban,
+        userId: userId,
+      };
+
+      const bank = await UserBankDetails.create(bankdetails);
+
+      if (!req.files) {
+        console.log({
+          status: false,
+          message: "Geen bestanden ge-upload",
+        });
+      } else {
+        let data = [];
+        //loop all files
+        _.forEach(_.keysIn(req.files.idvoorkant), (key) => {
+          let idkaart = req.files.idvoorkant[key];
+          const achternaam = req.body.achternaam.toLowerCase();
+          const naam = req.body.naam.toLowerCase();
+          const filename = idkaart.name.toLowerCase();
+
+          //move photo to uploads directory
+          idkaart.mv("/uploads/" + `${achternaam}-${naam}/id/${filename}`);
+
+          //push file details
+          data.push({
+            name: idkaart.name,
+            mimetype: idkaart.mimetype,
+            size: idkaart.size,
+          });
+        });
+
+        const useridpath = {
+          soortID: req.body.type,
+          documentnummer: req.body.documentnummer,
+          BSN: req.body.bsn,
+          file_path_front:
+            __dirname +
+            `/uploads/${req.body.achternaam.toLowerCase()}-${req.body.naam.toLowerCase()}/${req.files.idvoorkant[0].name.toLowerCase()}`,
+          file_path_back:
+            __dirname +
+            `/uploads/${req.body.achternaam.toLowerCase()}-${req.body.naam.toLowerCase()}/${req.files.idvoorkant[1].name.toLowerCase()}`,
+          userId: userId,
+        };
+
+        UserIdPath.create(useridpath);
+      }
+      Promise.all([user, details, adres, identity, emergency, bank])
+        .then((data) => {
+          res.status(200).send(data);
+        })
+        .catch((err) => {
+          res.status(400).send({
+            message:
+              err.message || "Some error occurred while creating the user.",
+          });
+        });
+    } else {
+      throw new Error("Niet gelukt");
+    }
+  });
 };
 
 // Retrieve all Users from the database.

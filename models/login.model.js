@@ -13,6 +13,11 @@ const Login = db.define("logins", {
     type: Sequelize.STRING,
     allowNull: false,
   },
+  refreshToken: {
+    type: Sequelize.STRING,
+    allowNull: true,
+    unique: true,
+  },
 });
 
 module.exports = Login;
