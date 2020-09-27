@@ -1,7 +1,6 @@
 require("dotenv").config();
 const express = require("express");
 const path = require("path");
-const fileUpload = require("express-fileupload");
 
 const logger = require("morgan");
 const cookieParser = require("cookie-parser");
@@ -15,19 +14,6 @@ const app = express();
 const corsOptions = {
   origin: "https://onboarding.thecallcompany.nl",
 };
-
-app.use(
-  fileUpload({
-    createParentPath: true,
-    limits: {
-      fileSize: 10 * 1024 * 1024 * 1024, //10MB max file(s) size
-      useTempFiles: true,
-      tempFileDir: "/tmp/",
-      safeFileNames: true,
-      preserveExtension: true,
-    },
-  })
-);
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));

@@ -16,26 +16,6 @@ const UserBankDetails = require("../models/UserBankDetails.model");
 const UserIdPath = require("../models/UserIdPath.model");
 const Login = require("../models/login.model");
 
-exports.simplecreate = async (req, res) => {
-  bcrypt.hash(req.body.wachtwoord, 10).then((hash) => {
-    const user = Login.create({
-      email: req.body.email,
-      wachtwoord: hash,
-    })
-      .then((response) => {
-        res.status(201).json({
-          message: "User successfully created!",
-          result: response,
-        });
-      })
-      .catch((error) => {
-        res.status(500).json({
-          error: error,
-        });
-      });
-  });
-};
-
 exports.login = async (req, res) => {
   let getUser = Login.findOne({
     where: { email: req.body.email },

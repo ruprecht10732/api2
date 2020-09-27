@@ -3,9 +3,6 @@ module.exports = (app) => {
   var router = require("express").Router();
   const authenticateToken = require("../middleware/authenticateToken");
 
-  // test createfromivite
-  router.post("/signup", User.simplecreate);
-
   // Login user
   router.post("/login", User.login);
 
