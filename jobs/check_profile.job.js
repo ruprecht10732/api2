@@ -24,7 +24,7 @@ exports.loginprofile = async () => {
         console.log("alles is prima");
       } else {
         newObject.forEach((person) => {
-          const template = `<h2>Maak je profiel compleet</h2><p>Je hebt je acocunt voor The Call Company gebruikersomgeving geactiveerd, dechter heb je nog niet je gegevens ingevoerd vul je profiel gegevens aan</p><p>Log via de volgende link in om je profiel compleet te maken:</p>
+          const template = `<h2>Maak je profiel compleet</h2><p>Je hebt je acocunt voor The Call Company gebruikersomgeving geactiveerd, echter heb je nog niet je gegevens ingevoerd. Vul je profiel gegevens aan.</p><p>Log via de volgende link in om je profiel compleet te maken:</p>
        <p><a href='https://onboarding.thecallcompany.nl/login' target='_blank'>https://onboarding.thecallcompany.nl/login</a></p>`;
 
           transporter
