@@ -25,8 +25,8 @@ exports.invite = (req, res) => {
   const transporter = nodemailer.createTransport({
     service: "SendinBlue", // no need to set host or port etc.
     auth: {
-      user: "info@thecallcompany.nl",
-      pass: "7XVgFszb9SNm1t0v",
+      user: process.env.SIB_USER,
+      pass: process.env.SIB_PASS,
     },
   });
 

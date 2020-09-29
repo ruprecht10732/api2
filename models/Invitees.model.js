@@ -27,6 +27,11 @@ const Invitees = db.define("invitees", {
     allowNull: false,
     defaultValue: false,
   },
+  reminder_count: {
+    type: Sequelize.INTEGER,
+    allowNull: true,
+    defaultValue: 0,
+  },
 });
 
 module.exports = Invitees;

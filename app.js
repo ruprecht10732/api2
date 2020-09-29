@@ -1,13 +1,15 @@
 require("dotenv").config();
 const express = require("express");
 const path = require("path");
+const cronjob = require("./jobs/check_complete.job.js");
 
-const logger = require("morgan");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 
 const models = require("./sequelize.js");
+
+var CronJob = require("cron").CronJob;
 
 const app = express();
 
@@ -65,5 +67,8 @@ app.use(function (err, req, res, next) {
     error: {},
   });
 });
+
+var job = new CronJob("0 0 19 * * *", cronjob.looknotaccept);
+job.start();
 
 module.exports = app;

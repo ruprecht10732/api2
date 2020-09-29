@@ -115,8 +115,16 @@ ActivitiesModel.belongsTo(ActivityCodesModel);
 AvailabilityHoursModel.belongsTo(UserModel);
 AvailabilityDaysModel.belongsTo(UserModel);
 
-db.sync({})
-  .then(() => {
-    console.log(`Database & tables created!`);
-  })
-  .catch((err) => console.log(err));
+if (process.env.NODE_ENV === "production") {
+  db.sync({ force: false })
+    .then(() => {
+      console.log(`Database & tables created!`);
+    })
+    .catch((err) => console.log(err));
+} else {
+  db.sync({ force: false })
+    .then(() => {
+      console.log(`Database & tables created!`);
+    })
+    .catch((err) => console.log(err));
+}
