@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const path = require("path");
 const cronjob = require("./jobs/check_complete.job.js");
+const cronjob2 = require("./jobs/check_profile.job");
 
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
@@ -78,7 +79,14 @@ app.use(function (err, req, res, next) {
   });
 });
 
-var job = new CronJob("0 0 19 * * *", cronjob.looknotaccept);
+var job = new CronJob("0 0 8 * * *", cronjob.looknotaccept);
+job.start();
+
+var job = new CronJob(
+  "* * 9 * * *",
+  cronjob2.loginprofile,
+  "Europe / Amsterdam"
+);
 job.start();
 
 module.exports = app;
