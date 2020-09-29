@@ -115,7 +115,7 @@ ActivitiesModel.belongsTo(ActivityCodesModel);
 AvailabilityHoursModel.belongsTo(UserModel);
 AvailabilityDaysModel.belongsTo(UserModel);
 
-if (process.env.NODE_ENV === "production") {
+if (process.env.NODE_ENV === "PRODUCTION") {
   db.sync({ force: false })
     .then(() => {
       console.log(`Database & tables created!`);

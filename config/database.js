@@ -1,7 +1,7 @@
 const Sequelize = require("sequelize");
 
 if (
-  process.env.NODE_ENV === "production" &&
+  process.env.NODE_ENV === "PRODUCTION" &&
   process.env.FORCESYNCCHECKED === CHECKED
 ) {
   module.exports = db = new Sequelize(

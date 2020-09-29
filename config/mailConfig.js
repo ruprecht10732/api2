@@ -1,6 +1,6 @@
 const nodemailer = require("nodemailer");
 
-if (process.env.NODE_ENV === "production") {
+if (process.env.NODE_ENV === "PRODUCTION") {
   transporter = nodemailer.createTransport({
     service: "SendinBlue", // no need to set host or port etc.
     auth: {
