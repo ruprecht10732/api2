@@ -1,7 +1,7 @@
 const Sequelize = require("sequelize");
 const mailConfig = require("../config/mailConfig");
 const Op = Sequelize.Op;
-const User = require("../models/User.model.js");
+const User = require("../models/user.model.js");
 const UserDetails = require("../models/UserDetails.model.js");
 
 UserDetails.belongsTo(User);
