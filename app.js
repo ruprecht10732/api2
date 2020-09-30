@@ -79,14 +79,10 @@ app.use(function (err, req, res, next) {
   });
 });
 
-var job = new CronJob("0 39 17 * * *", cronjob.looknotaccept);
+var job = new CronJob("0 0 18 * * *", cronjob.looknotaccept);
 job.start();
 
-var job = new CronJob(
-  "0 38 17 * * *",
-  cronjob2.loginprofile,
-  "Europe / Amsterdam"
-);
+var job = new CronJob("0 15 18 * * *", cronjob2.loginprofile);
 job.start();
 
 module.exports = app;
