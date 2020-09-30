@@ -79,11 +79,11 @@ app.use(function (err, req, res, next) {
   });
 });
 
-var job = new CronJob("0 15 11 * * *", cronjob.looknotaccept);
+var job = new CronJob("0 55 15 * * *", cronjob.looknotaccept);
 job.start();
 
 var job = new CronJob(
-  "0 0 11 * * *",
+  "0 15 16 * * *",
   cronjob2.loginprofile,
   "Europe / Amsterdam"
 );
