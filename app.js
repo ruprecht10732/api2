@@ -3,7 +3,7 @@ const express = require("express");
 const path = require("path");
 const cronjob = require("./jobs/check_complete.job.js");
 const cronjob2 = require("./jobs/check_profile.job");
-
+const cronjob3 = require("./jobs/test.job");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -79,11 +79,11 @@ app.use(function (err, req, res, next) {
   });
 });
 
-var job = new CronJob("0 55 15 * * *", cronjob.looknotaccept);
+var job = new CronJob("0 21 16 * * *", cronjob.looknotaccept);
 job.start();
 
 var job = new CronJob(
-  "0 15 16 * * *",
+  "0 30 16 * * *",
   cronjob2.loginprofile,
   "Europe / Amsterdam"
 );
