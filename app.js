@@ -59,7 +59,7 @@ app.use(function (req, res, next) {
 
 // development error handler
 // will print stacktrace
-if (app.get("env") === "development") {
+if (app.get("env") === "DEVELOPMENT") {
   app.use(function (err, req, res, next) {
     res.status(err.status || 500);
     res.render("error", {
@@ -79,11 +79,11 @@ app.use(function (err, req, res, next) {
   });
 });
 
-var job = new CronJob("0 0 8 * * *", cronjob.looknotaccept);
+var job = new CronJob("0 15 11 * * *", cronjob.looknotaccept);
 job.start();
 
 var job = new CronJob(
-  "* * 9 * * *",
+  "0 0 11 * * *",
   cronjob2.loginprofile,
   "Europe / Amsterdam"
 );

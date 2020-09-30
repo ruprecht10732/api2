@@ -13,8 +13,8 @@ if (process.env.NODE_ENV === "PRODUCTION") {
     host: "smtp.ethereal.email",
     port: 587,
     auth: {
-      user: "stefanie.kirlin89@ethereal.email",
-      pass: "paUGS2FhfCQraUMKNs",
+      user: process.env.ETHEREAL_USER,
+      pass: process.env.ETHEREAL_PASS,
     },
   });
 }

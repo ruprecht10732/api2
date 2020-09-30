@@ -18,7 +18,7 @@ exports.looknotaccept = async () => {
         .sendMail({
           to: user.email,
           from: "The Call Company <info@thecallcompany.nl>",
-          subject: "Herinnering: Maak je aanmelding compleet",
+          subject: "Herinnering: Activeer je account",
           html: template,
         })
         .then((result) => {
